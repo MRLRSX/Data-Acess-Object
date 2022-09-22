@@ -27,7 +27,7 @@ public class SellerDaoJDBC implements SellerDAO {
 
 	@Override
 	public void insert(Seller seller) {
-		// TODO Auto-generated method stub
+	
 		
 	}
 
@@ -72,7 +72,7 @@ public class SellerDaoJDBC implements SellerDAO {
 	    	  ps.setDate(3, conversorTime(seller.getBirthDate()));
 	    	  ps.setInt(4, seller.getDepartment().getId());
 	    	  ps.setInt(5, seller.getId());
-	    	  ps.executeQuery();
+	    	  ps.executeUpdate();
 	      }catch(SQLException error) {
 	    	  throw new DBException(error.getMessage());
 	      }finally {
@@ -83,7 +83,18 @@ public class SellerDaoJDBC implements SellerDAO {
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement("DELETE FROM seller WHERE id = ?");
+			ps.setInt(1, id);
+			ps.executeUpdate();
+		}catch(SQLException error) {
+			throw new DBException(error.getMessage());
+		}finally {
+			Conexao.closeStatement(ps);
+			Conexao.closeConnection();
+			
+		}
 		
 	}
 
