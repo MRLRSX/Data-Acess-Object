@@ -11,7 +11,7 @@ import java.util.Properties;
 
 public class Conexao {
 
-	private static Connection conn = null;
+	private static Connection conn = null;	
 
 	public static Connection getConnection() {
 		try {
