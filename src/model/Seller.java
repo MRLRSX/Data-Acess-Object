@@ -13,17 +13,19 @@ public class Seller implements Serializable{
 	private String email;
 	private LocalDateTime birthDate;
 	private Double baseSalary;
-    private Integer departmentId;
+    private Department department;
 	
+    
+    
     public Seller() {}
 	
-	public Seller(Integer id, String name, String email, LocalDateTime birthDate, Double baseSalary, Integer departmentId) {
+	public Seller(Integer id, String name, String email, LocalDateTime birthDate, Double baseSalary, Department department) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.birthDate = birthDate;
 		this.baseSalary = baseSalary;
-		this.departmentId = departmentId;
+		this.department = department;
 	}
 
 	public Integer getId() {
@@ -66,17 +68,19 @@ public class Seller implements Serializable{
 		this.baseSalary = baseSalary;
 	}
     
-	public Integer getDepartmentId() {
-		return departmentId;
+	
+
+	public Department getDepartment() {
+		return department;
 	}
 
-	public void setDepartmentId(Integer departmentId) {
-		this.departmentId = departmentId;
+	public void setDepartment(Department department) {
+		this.department = department;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(baseSalary, birthDate, email, id, name);
+		return Objects.hash(id);
 	}
 
 	@Override
@@ -84,19 +88,19 @@ public class Seller implements Serializable{
 		if (this == obj)
 			return true;
 		if (obj == null)
-			
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		Seller other = (Seller) obj;
-		return Objects.equals(baseSalary, other.baseSalary) && Objects.equals(birthDate, other.birthDate)
-				&& Objects.equals(email, other.email) && Objects.equals(id, other.id)
-				&& Objects.equals(name, other.name);
+		return Objects.equals(id, other.id);
 	}
 
 	@Override
 	public String toString() {
-		return "Seller id: " + id + ", name: " + name + ", email: " + email + ", birthDate: " + birthDate + ", baseSalary: "
-				+ baseSalary;
+		return "Seller [id=" + id + ", name=" + name + ", email=" + email + ", birthDate=" + birthDate + ", baseSalary="
+				+ baseSalary + ", department=" + department + "]";
 	}
+
+    
+    
 }
