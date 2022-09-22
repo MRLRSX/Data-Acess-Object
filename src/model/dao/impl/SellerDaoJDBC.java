@@ -1,9 +1,12 @@
 package model.dao.impl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -61,8 +64,21 @@ public class SellerDaoJDBC implements SellerDAO {
 
 	@Override
 	public void update(Seller seller) {
-		// TODO Auto-generated method stub
-		
+	      PreparedStatement ps = null;
+	      try {
+	    	  ps = connection.prepareStatement("UPDATE seller SET name = ?, email = ?, birthdate = ?, departmentid = ? WHERE id = ? ");
+	    	  ps.setString(1, seller.getName());
+	    	  ps.setString(2, seller.getEmail());
+	    	  ps.setDate(3, conversorTime(seller.getBirthDate()));
+	    	  ps.setInt(4, seller.getDepartment().getId());
+	    	  ps.setInt(5, seller.getId());
+	    	  ps.executeQuery();
+	      }catch(SQLException error) {
+	    	  throw new DBException(error.getMessage());
+	      }finally {
+	    	  Conexao.closeStatement(ps);
+	    	  Conexao.closeConnection();
+	      }
 	}
 
 	@Override
@@ -76,7 +92,12 @@ public class SellerDaoJDBC implements SellerDAO {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
+   
+    /** STACK-OVER-FLOW SAVE THE DAY */
+   private static java.sql.Date conversorTime(LocalDateTime dt) {
+	   LocalDate locald = LocalDate.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth());
+	   Date date = Date.valueOf(locald);
+	   return new java.sql.Date(date.getTime());
+   }
 
 }
