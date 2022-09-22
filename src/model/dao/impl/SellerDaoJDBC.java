@@ -5,10 +5,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import db.Conexao;
@@ -28,6 +28,23 @@ public class SellerDaoJDBC implements SellerDAO {
 	@Override
 	public void insert(Seller seller) {
 	
+		  PreparedStatement st = null;
+
+		  try {
+			  st = connection.prepareStatement("INSERT INTO seller (name, email, birthdate, basesalary, departmentid) VALUES (?, ?, ?, ?, ?)");
+			  
+			  st.setString(1, seller.getName());
+			  st.setString(2, seller.getEmail());
+			  st.setDate(3, conversorTime(seller.getBirthDate()));
+			  st.setDouble(4, seller.getBaseSalary());
+			  st.setInt(5, seller.getDepartment().getId());
+              st.executeUpdate();
+		  }catch(SQLException error) {
+			  throw new DBException(error.getMessage());
+		  }finally {
+			  Conexao.closeStatement(st);
+			  Conexao.closeConnection();
+		  }
 		
 	}
 
@@ -93,15 +110,44 @@ public class SellerDaoJDBC implements SellerDAO {
 		}finally {
 			Conexao.closeStatement(ps);
 			Conexao.closeConnection();
-			
 		}
 		
 	}
 
 	@Override
 	public List<Seller> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		List<Seller> listaSeller = new ArrayList<>();
+		
+		try {
+			st = connection.prepareStatement("SELECT * FROM seller INNER JOIN department ON seller.DepartmentId = department.Id");
+			rs = st.executeQuery();
+			
+			while (rs.next()) {
+				Seller seller = new Seller();
+				Department department = new Department();
+				seller.setId(rs.getInt("id"));
+				seller.setName(rs.getString("name"));
+				seller.setEmail(rs.getString("email"));
+				seller.setBirthDate(LocalDateTime.parse(rs.getString("birthdate"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+				seller.setBaseSalary(rs.getDouble("basesalary"));
+				department.setId(rs.getInt("department.id"));
+				department.setName(rs.getString("department.name"));
+                seller.setDepartment(department);
+				listaSeller.add(seller);
+			}
+			return listaSeller;
+		}
+		catch (SQLException error) {
+			throw new DBException(error.getMessage());
+		}
+		finally {
+			Conexao.closeResultSet(rs);
+			Conexao.closeStatement(st);
+			Conexao.closeConnection();
+		}
 	}
    
     /** STACK-OVER-FLOW SAVE THE DAY */
