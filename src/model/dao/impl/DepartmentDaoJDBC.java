@@ -42,6 +42,7 @@ public class DepartmentDaoJDBC implements DepartmentDAO {
 		Department department = new Department();
 		try {
 			ps = connection.prepareStatement("SELECT * FROM department Where id = ?");
+			ps.setInt(1, id);
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				department.setId(rs.getInt("id"));
