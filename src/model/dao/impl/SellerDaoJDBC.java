@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,19 +32,18 @@ public class SellerDaoJDBC implements SellerDAO {
 		  PreparedStatement st = null;
 
 		  try {
-			  st = connection.prepareStatement("INSERT INTO seller (name, email, birthdate, basesalary, departmentid) VALUES (?, ?, ?, ?, ?)");
+			  st = connection.prepareStatement("INSERT INTO seller (name, email, birthdate, basesalary, departmentid) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 			  
 			  st.setString(1, seller.getName());
 			  st.setString(2, seller.getEmail());
 			  st.setDate(3, conversorTime(seller.getBirthDate()));
 			  st.setDouble(4, seller.getBaseSalary());
 			  st.setInt(5, seller.getDepartment().getId());
-              st.executeUpdate();
+           
 		  }catch(SQLException error) {
 			  throw new DBException(error.getMessage());
 		  }finally {
 			  Conexao.closeStatement(st);
-			  Conexao.closeConnection();
 		  }
 		
 	}
@@ -75,7 +75,6 @@ public class SellerDaoJDBC implements SellerDAO {
 		}finally{
 			Conexao.closeResultSet(rs);
 			Conexao.closeStatement(ps);
-			Conexao.closeConnection();
 		}
 	}
 
@@ -109,7 +108,6 @@ public class SellerDaoJDBC implements SellerDAO {
 			throw new DBException(error.getMessage());
 		}finally {
 			Conexao.closeStatement(ps);
-			Conexao.closeConnection();
 		}
 		
 	}
@@ -146,7 +144,6 @@ public class SellerDaoJDBC implements SellerDAO {
 		finally {
 			Conexao.closeResultSet(rs);
 			Conexao.closeStatement(st);
-			Conexao.closeConnection();
 		}
 	}
    
